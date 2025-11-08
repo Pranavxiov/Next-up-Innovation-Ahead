@@ -1,2 +1,1096 @@
 # Next-up-Innovation-Ahead
 To build a dynamic landing portal template that empowers brands to launch new products of any category with visual impact and clarity.
+
+CODE :
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Digital StoreFront</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==============================
+       DESIGN TOKENS
+    ===============================*/
+    :root{
+      --bg: #fcfcf9;
+      --surface:#ffffff;
+      --text:#13343b;
+      --muted:#606c70;
+      --primary:#21808d;
+      --primary-600:#1d7480;
+      --primary-700:#aad4da;
+      /* NEW: Light background color for nav */
+      --primary-bg-light: #f0f9fa;
+      --ring: rgba(33,128,141,.35);
+      --border: rgba(94,82,64,.18);
+      --shadow-sm:0 1px 2px rgba(0,0,0,.06);
+      --shadow-md:0 6px 18px rgba(0,0,0,.08);
+      --radius:14px;
+      --space-8:8px;--space-12:12px;--space-16:16px;--space-20:20px;--space-24:24px;--space-32:32px;--space-48:48px;--space-64:64px;
+      --font:'Inter',system-ui,Segoe UI,Roboto,Arial,sans-serif;
+      --xs:11px;--sm:12px;--base:14px;--lg:16px;--xl:18px;--xxl:22px;--display:28px;
+    }
+    .dark{
+      --bg:#1f2121; --surface:#262828; --text:#f1f1f1; --muted:#a7a9a9;
+      --primary:#32b8c6; --primary-600:#2da6b2; --primary-700:#2998a4;
+      /* NEW: Dark equivalent for nav background */
+      --primary-bg-light: #242c2d;
+      --border:rgba(255,255,255,.12); --ring: rgba(50,184,198,.35);
+      --shadow-sm:0 1px 2px rgba(0,0,0,.35); --shadow-md:0 8px 24px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--font);font-size:var(--base);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+    
+    /* ==============================
+       LOGIN SCREEN STYLES
+    ===============================*/
+    #login-screen{
+      min-height:100svh; display:grid; place-items:center; padding:var(--space-24);
+      background:
+        radial-gradient(1200px 600px at -10% -20%, rgba(33,128,141,.08), transparent 60%),
+        radial-gradient(800px 500px at 110% 120%, rgba(33,128,141,.08), transparent 60%), var(--bg);
+    }
+    .login-card{
+      width:min(480px,92vw);
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow-md);
+      padding:var(--space-24);
+      display:flex; flex-direction:column; gap:var(--space-20);
+      animation:pop .25s ease;
+    }
+    @keyframes pop {from{transform:scale(.98);opacity:.0} to{transform:scale(1);opacity:1}}
+    .login-title{
+      text-align:center;
+      letter-spacing:.06em;
+      font-weight:700;
+      color:var(--text);
+      font-size:var(--display);
+    }
+    .login-sub{
+      text-align:center;color:var(--muted);font-size:var(--xl);
+      margin-top:-6px;
+    }
+    .field{display:flex;flex-direction:column;gap:6px;}
+    .label{font-size:var(--sm);color:var(--muted)}
+    .input{
+      width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--border);
+      background:var(--bg);color:var(--text);outline:none;transition:.2s;
+    }
+    .input:focus{box-shadow:0 0 0 4px var(--ring);border-color:transparent}
+    .actions{display:flex;gap:var(--space-12);flex-wrap:wrap}
+    .btn{
+      appearance:none;border:none;border-radius:10px;padding:10px 16px;font-weight:600;cursor:pointer;
+      transition:.2s; box-shadow:var(--shadow-sm);
+    }
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-primary:hover{background:var(--primary-600)}
+    .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text)}
+    .btn-ghost:hover{border-color:var(--primary)}
+    .row-between{display:flex;justify-content:space-between;align-items:center}
+    
+    /* ==============================
+       APP NAV
+    ===============================*/
+    #app{display:none; min-height:100svh}
+    .navbar{
+      position:sticky; top:0; z-index:50;
+      background:var(--primary-bg-light); 
+      border-bottom:1px solid var(--border);
+      box-shadow:var(--shadow-sm);
+    }
+    .nav-wrap{
+      max-width:1200px;margin-inline:auto;padding:12px 16px;
+      display:flex;align-items:center;gap:12px;justify-content:space-between;
+    }
+    .logo a{
+      display:flex; align-items:center;
+    }
+    .logo a svg {
+      border-radius: 8px;
+    }
+    
+    .nav-left, .nav-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .chip{padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:var(--surface);cursor:pointer}
+    .chip[data-active="true"]{background:var(--primary);color:#fff;border-color:transparent}
+    .search{display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:999px;padding:8px 12px;background:var(--bg)}
+    .search input{border:none;background:transparent;outline:none;color:var(--text);min-width:160px}
+    .nav-btn{padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-weight:600}
+    .nav-btn.primary{background:var(--primary);color:#fff;border-color:transparent}
+    
+    .nav-avatar{
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 700;
+      font-size: var(--lg);
+      cursor: pointer;
+      user-select: none;
+      transition: .2s ease;
+    }
+    .nav-avatar:hover {
+      opacity: 0.85;
+    }
+    
+    .nav-icon-btn {
+      position: relative;
+      cursor: pointer;
+      padding: 6px;
+      color: var(--text);
+      border: none;
+      background: transparent;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+    }
+    .nav-icon-btn:hover {
+      background-color: var(--border);
+    }
+    .nav-icon-btn svg {
+      display: block;
+      stroke-width: 2;
+    }
+    .cart-badge, .wishlist-badge {
+      position: absolute;
+      top: -4px;
+      right: -6px;
+      background: #ff5459;
+      color: #fff;
+      border-radius: 999px;
+      padding: 1px 6px;
+      font-size: 11px;
+      font-weight: 700;
+      user-select: none;
+    }
+    .wishlist-badge {
+      background: var(--primary);
+    }
+
+    /* ==============================
+       HEADER / BREADCRUMB
+    ===============================*/
+    header{max-width:1200px;margin:16px auto 0;padding:0 16px 16px}
+    header h1{font-size:var(--xxl);font-weight:800}
+    header p{color:var(--muted);margin-top:4px}
+    .breadcrumb{max-width:1200px;margin:0 auto 8px;padding:0 16px;color:var(--muted);font-size:var(--sm)}
+    .breadcrumb a{color:var(--primary); cursor: pointer;}
+
+    /* ==============================
+       PRODUCTS GRID
+    ===============================*/
+    .product-container{
+      max-width:1200px;margin:0 auto;padding:16px;
+      display:grid; gap:16px;
+      grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+    }
+    .product-card{
+      position: relative;
+      background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden;
+      box-shadow:var(--shadow-sm); transition:.2s; display:flex; flex-direction:column;
+    }
+    .product-card:hover{transform:translateY(-3px); box-shadow:var(--shadow-md)}
+    .product-card img{width:100%; height:180px; object-fit:cover; background:#eee}
+    .product-body{padding:12px 12px 14px; display:flex; flex-direction:column; gap:8px; flex-grow:1}
+    .rating{font-size:14px}
+    .price{font-weight:800}
+    .desc{color:var(--muted); font-size:var(--sm); flex-grow:1}
+    .actions-row{display:flex;gap:8px;margin-top:auto}
+    .buy-btn,.quick-view{flex:1;padding:9px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);cursor:pointer;font-weight:600}
+    .buy-btn{background:var(--primary); color:#fff; border-color:transparent}
+    .buy-btn:hover{background:var(--primary-600)}
+    .quick-view:hover{border-color:var(--primary)}
+    
+    .wishlist-toggle-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(255,255,255,0.8);
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      z-index: 2;
+      color: var(--text);
+      transition: .2s ease;
+      padding: 0;
+    }
+    .wishlist-toggle-btn:hover {
+      background: #fff;
+      transform: scale(1.1);
+    }
+    .wishlist-toggle-btn svg {
+      stroke-width: 2;
+      fill: none;
+      stroke: var(--text);
+    }
+    .wishlist-toggle-btn.liked svg {
+      fill: #ff5459;
+      stroke: #ff5459;
+    }
+
+    /* ==============================
+       CATEGORY STRIP
+    ===============================*/
+    .categories{max-width:1200px;margin:8px auto 32px;padding:0 16px}
+    .categories h2{font-size:var(--xl);margin-bottom:8px}
+    .category-box{border:1px dashed var(--border);padding:10px;border-radius:12px;margin:6px 0;color:var(--muted)}
+
+    /* ==============================
+       MODALS
+    ===============================*/
+    .modal, .modal-center{
+      position:fixed; inset:0; display:none; align-items:center; justify-content:center; backdrop-filter:blur(2px);
+      background:rgba(0,0,0,.25); z-index:100;
+    }
+    .modal.active, .modal-center.active{display:flex}
+    .modal-card{
+      width:min(720px,92vw); background:var(--surface); border:1px solid var(--border); border-radius:16px; box-shadow:var(--shadow-md);
+      overflow:hidden;
+      animation:pop .25s ease;
+    }
+    .modal-header{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border)}
+    .close{background:transparent;border:none;font-size:20px;cursor:pointer;color:var(--muted)}
+    .modal-body{padding:14px; display:grid; grid-template-columns:220px 1fr; gap:16px}
+    .modal-body img{width:100%; height:220px; object-fit:cover; border-radius:12px}
+    .modal-actions{display:flex; gap:10px; margin-top:10px}
+
+    /* Launch form */
+    .form-grid{display:grid; gap:10px}
+    .form-grid input{padding:10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text)}
+    .form-grid input:focus{outline:none; box-shadow:0 0 0 4px var(--ring); border-color:transparent}
+
+    /* Toast */
+    .toast{position:fixed; bottom:18px; left:50%; transform:translateX(-50%); background:var(--surface); color:var(--text);
+      border:1px solid var(--border); padding:10px 14px; border-radius:999px; box-shadow:var(--shadow-md); display:none; z-index:120}
+    .toast.show{display:block; animation:fade 2.2s ease forwards}
+    @keyframes fade{0%{opacity:0; transform:translateX(-50%) translateY(8px)} 10%{opacity:1; transform:translateX(-50%) translateY(0)} 90%{opacity:1} 100%{opacity:0}}
+
+    /* ==============================
+       CART MODAL
+    ===============================*/
+    #cart-modal .modal-card{max-width: 500px;}
+    #cart-modal .modal-body{
+      grid-template-columns:1fr;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+    .cart-item{
+      display:flex; gap:12px; align-items:center;
+      padding-bottom:10px; margin-bottom:10px; border-bottom:1px solid var(--border);
+    }
+    .cart-item:last-child{border:none; margin:0; padding:0}
+    .cart-item img{width:60px; height:60px; border-radius:8px; object-fit:cover}
+    .cart-item-info{flex-grow:1}
+    .cart-item-info h4{font-size:var(--lg)}
+    .cart-item-info p{color:var(--muted); font-size:var(--sm)}
+    .cart-item-actions{display:flex; align-items:center; gap:8px; font-size:var(--lg)}
+    .cart-item-actions button{background:transparent; border:none; cursor:pointer; color:var(--text); font-size:18px}
+    .remove-from-cart{color:#ff5459 !important; font-size:14px; margin-left:12px; font-weight:600}
+    #cart-total{
+      font-size:var(--xl); font-weight:800; text-align:right;
+      margin-top:16px; padding-top:16px; border-top:1px solid var(--border);
+    }
+    #cart-empty-msg{
+      text-align:center; padding:32px; color:var(--muted); font-size:var(--lg);
+    }
+    
+    /* ==============================
+       WISHLIST MODAL
+    ===============================*/
+    #wishlist-modal .modal-card { max-width: 500px; }
+    #wishlist-modal .modal-body { grid-template-columns: 1fr; max-height: 60vh; overflow-y: auto; }
+    .wishlist-item {
+      display:flex; gap:12px; align-items:center;
+      padding-bottom:10px; margin-bottom:10px; border-bottom:1px solid var(--border);
+    }
+    .wishlist-item:last-child { border: none; padding-bottom: 0; margin-bottom: 0; }
+    .wishlist-item img { width:60px; height:60px; border-radius:8px; object-fit:cover }
+    .wishlist-item-info { flex-grow:1 }
+    .wishlist-item-info h4 { font-size:var(--lg) }
+    .wishlist-item-info p { color:var(--muted); font-size:var(--sm) }
+    .remove-from-wishlist {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: var(--sm);
+    }
+    .remove-from-wishlist:hover { border-color: #ff5459; }
+    #wishlist-empty-msg { text-align:center; padding:32px; color:var(--muted); font-size:var(--lg); }
+
+    /* ==============================
+       PROFILE MODAL
+    ===============================*/
+    #profile-modal .modal-card{max-width: 400px;}
+    #profile-modal .modal-body{
+      grid-template-columns: 1fr;
+      line-height: 1.6;
+    }
+    #profile-details strong {
+      color: var(--muted);
+      min-width: 70px;
+      display: inline-block;
+    }
+    .profile-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .profile-actions .btn {
+      width: 100%;
+    }
+    #logout-btn {
+      width: 100%;
+      margin-top: 10px;
+      background: var(--border);
+    }
+    #logout-btn:hover {
+      background: #ff5459;
+      color: #fff;
+      border-color: transparent;
+    }
+
+    /* Responsive */
+    @media (max-width:720px){
+      .modal-body{grid-template-columns:1fr}
+      .nav-left{gap:6px; overflow-x: auto; padding-bottom: 8px; flex-wrap: nowrap;}
+      .search input{min-width:100px}
+    }
+    @media (max-width:480px){
+      .modal-card{width:95vw;}
+      .login-card{width:95vw;}
+    }
+  </style>
+</head>
+<body>
+
+  <section id="login-screen">
+    <div class="login-card" role="dialog" aria-labelledby="title">
+      <div class="login-title" id="title">YOUR DIGITAL STOREFRONT</div>
+      <p class="login-sub">Sign in to continue</p>
+      <div class="field">
+        <label class="label" for="login-id">Login ID</label>
+        <input id="login-id" class="input" type="text" placeholder="Enter Login ID" autocomplete="username">
+      </div>
+      <div class="field">
+        <label class="label" for="login-pass">Password</label>
+        <input id="login-pass" class="input" type="password" placeholder="Enter Password" autocomplete="current-password">
+      </div>
+      <div class="row-between">
+        <div style="display:flex;align-items:center;gap:8px">
+          <input id="remember" type="checkbox">
+          <label for="remember" class="label">Remember me</label>
+        </div>
+        <a href="#" id="forgot-link" class="label">Forgot password?</a>
+      </div>
+      <div class="actions" style="flex-direction:column;gap:12px;">
+        <button class="btn btn-primary" id="login-btn" style="box-shadow:var(--shadow-md);height:48px;">Login</button>
+        <div style="display:flex;justify-content:space-between;padding-top:9px;">
+          <a href="#" class="label" id="contact-link">Can't login? Contact admin</a>
+          <a href="#" class="label" id="register-link">New Register</a>
+        </div>
+     
+      </div>
+    </div>
+  </section>
+  <section id="app">
+    <nav class="navbar">
+      <div class="nav-wrap">
+        <div class="logo">
+          <a href="#" aria-label="Digital StoreFront Home">
+            <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="100" height="100" rx="20" fill="var(--primary)"/>
+              <path d="M30 25H55C66.0457 25 75 33.9543 75 45V55C75 66.0457 66.0457 75 55 75H30V25Z" fill="var(--bg)"/>
+              <path d="M50 42H30V58H50C54.4183 58 58 54.4183 58 50C58 45.5817 54.4183 42 50 42Z" fill="var(--primary)"/>
+            </svg>
+          </a>
+        </div>
+        
+        <div class="nav-left" id="category-strip">
+          <button class="chip category-btn" data-category="All" data-active="true">All</button>
+          <button class="chip category-btn" id="latest-arrivals-btn" data-category="latest">Latest Arrivals</button>
+          <button class="chip category-btn" data-category="Beauty">Beauty</button>
+          <button class="chip category-btn" data-category="Electronics">Electronics</button>
+          <button class="chip category-btn" data-category="Fashion">Fashion</button>
+          <button class="chip category-btn" data-category="Decor">Decor</button>
+          <button class="chip category-btn" data-category="Accessories">Accessories</button>
+          <button class="chip category-btn" data-category="Kids">Kids</button>
+        </div>
+
+        <div class="nav-right">
+          <div class="search">
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27a6.471 6.471 0 1 0-.71.71l.27.28v.79l5 4.99L20.49 19zm-6 0A4.5 4.5 0 1 1 14 9.5 4.505 4.505 0 0 1 9.5 14"/></svg>
+            <input id="search-input" type="text" placeholder="Search products...">
+          </div>
+          <button class="nav-btn primary" id="launch-btn">+ Launch Product</button>
+          
+          <div id="wishlist-btn" class="nav-icon-btn" role="button" tabindex="0" aria-label="View Wishlist">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <span class="wishlist-badge" id="wishlist-count">0</span>
+          </div>
+          
+          <div id="cart-btn" class="nav-icon-btn" role="button" tabindex="0" aria-label="View Cart">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+            <span class="cart-badge" id="cart-count">0</span>
+          </div>
+<!-- ✅ keep only ONE profile button -->
+<div class="nav-avatar" id="profile-btn" role="button" tabindex="0" aria-label="View Profile">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+    <line x1="3" y1="6" x2="21" y2="6"></line>
+    <path d="M16 10a4 4 0 0 1-8 0"></path>
+  </svg>
+</div>
+          
+        </div>
+      </div>
+    </nav>
+
+    <header>
+      <h1>Your Digital StoreFront</h1>
+      <p>Discover the latest trending products!</p>
+    </header>
+
+    <nav class="breadcrumb" id="breadcrumb">
+      <a href="#" id="bc-home">Home</a> &gt; <a href="#" id="bc-home">Lateat arrivals</a> &gt; <a href="#" id="bc-products">Products</a> &gt; <span id="bc-current">All</span>
+    </nav>
+    
+    <main class="product-container" id="product-container"></main>
+
+    <section class="categories">
+      <h2>Categories</h2>
+      <div class="category-box">
+        <h3>Beauty & Cosmetics</h3>
+        <p>Explore perfumes, lipsticks, skincare & more.</p>
+      </div>
+      <div class="category-box">
+        <h3>Fashion & Accessories</h3>
+        <p>Trendy backpacks, sunglasses, and more stylish picks.</p>
+      </div>
+      <div class="category-box">
+        <h3>Electronics & Gadgets</h3>
+        <p>Smart watches, headphones, and the latest tech gear.</p>
+      </div>
+    </section>
+  </section>
+
+  <div class="modal-center" id="quick-modal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="qv-title">
+      <div class="modal-header">
+        <strong id="qv-title">Quick View</strong>
+        <button class="close" data-close>&times;</button>
+      </div>
+      <div class="modal-body">
+        <img id="qv-img" alt="">
+        <div>
+          <h2 id="qv-name"></h2>
+          <div id="qv-rating" class="rating"></div>
+          <p id="qv-price" class="price"></p>
+          <p id="qv-desc" class="desc" style="margin-top:6px"></p>
+          <div class="modal-actions">
+            <button class="btn btn-primary" id="qv-add" data-id="">Add to Cart</button>
+            <button class="btn btn-ghost" data-close>Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-center" id="launch-modal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="launch-title">
+      <div class="modal-header">
+        <strong id="launch-title">Launch New Product</strong>
+        <button class="close" data-close>&times;</button>
+      </div>
+      <div class="modal-body" style="grid-template-columns:1fr;">
+        <form id="launch-form" class="form-grid">
+          <input type="text" id="pname" placeholder="Product Name" required>
+          <input type="number" id="pprice" placeholder="Price (e.g., 49.99)" step="0.01" required>
+          <input type="text" id="pdesc" placeholder="Description" required>
+          <input type="text" id="pcategory" placeholder="Category (Beauty, Electronics, Fashion, etc.)" required>
+          <input type="url" id="pimage" placeholder="Image URL" required>
+          <input type="text" id="prating" placeholder="Rating (e.g., ★ ★ ★ ★ ☆)" value="★ ★ ★ ★ ☆">
+          <button class="btn btn-primary" type="submit">Launch</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-center" id="cart-modal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="cart-title">
+      <div class="modal-header">
+        <strong id="cart-title">Your Cart</strong>
+        <button class="close" data-close>&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="cart-items-container">
+          <div id="cart-empty-msg">Your cart is empty.</div>
+        </div>
+        <div id="cart-total" style="display:none;">
+          Total: $0.00
+        </div>
+        <button class="btn btn-primary" id="checkout-btn" style="margin-top:16px; width:100%">Checkout</button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal-center" id="wishlist-modal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="wishlist-title">
+      <div class="modal-header">
+        <strong id="wishlist-title">Your Wishlist</strong>
+        <button class="close" data-close>&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="wishlist-items-container">
+          <div id="wishlist-empty-msg">Your wishlist is empty.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-center" id="profile-modal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="profile-title">
+      <div class="modal-header">
+        <strong id="profile-title">Your Profile</strong>
+        <button class="close" data-close>&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="profile-details">
+          </div>
+        <div style="margin-top:12px;">
+          <strong>Address:</strong>
+          <div>123, Digital Lane, Web City</div>
+          <div>PIN: 500036, India</div>
+        </div>
+        
+        <div class="profile-actions">
+          <button class="btn btn-ghost" id="profile-mode-toggle">Toggle Dark/Light</button>
+          <button class="btn btn-ghost" id="settings-btn">Settings</button>
+        </div>
+        <button class="btn btn-ghost" id="customer-service-btn" style="width:100%; margin-top: 10px;">Customer Service</button>
+        <button class="btn btn-ghost" id="logout-btn">Logout</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    // =========================
+    // UTILS
+    // =========================
+    const $ = (q,root=document)=>root.querySelector(q);
+    const $$ = (q,root=document)=>Array.from(root.querySelectorAll(q));
+    const showToast = (msg)=>{
+      const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+      setTimeout(()=>t.classList.remove('show'), 2100);
+    };
+
+    // =========================
+    // THEME
+    // =========================
+    const themeToggleBtn = $('#profile-mode-toggle');
+    function toggleTheme() {
+      document.documentElement.classList.toggle('dark');
+      const isDark = document.documentElement.classList.contains('dark');
+      localStorage.setItem('theme', isDark ? 'dark':'light');
+      themeToggleBtn.textContent = isDark ? 'Switch to Light' : 'Switch to Dark';
+    }
+    themeToggleBtn?.addEventListener('click', toggleTheme);
+    
+    (function(){
+      const saved = localStorage.getItem('theme');
+      if(saved === 'dark') {
+        document.documentElement.classList.add('dark');
+        themeToggleBtn.textContent = 'Switch to Light';
+      } else {
+        themeToggleBtn.textContent = 'Switch to Dark';
+      }
+    })();
+
+    // =========================
+    // LOGIN FLOW
+    // =========================
+    function setUser(id){ sessionStorage.setItem('dsf_user', id);}
+    function getUser(){ return sessionStorage.getItem('dsf_user'); }
+    const loginID = $('#login-id');
+    const loginPass = $('#login-pass');
+
+    $('#login-btn').addEventListener('click', ()=>{
+      const id = loginID.value.trim();
+      const pw = loginPass.value.trim();
+      if(!id || !pw){ showToast('Please enter Login ID and Password.'); return; }
+      setUser(id);
+      $('#login-screen').style.display = 'none';
+      $('#app').style.display = 'block';
+      showToast('Welcome, ' + id + ' 👋');
+      updateProfile();
+    });
+    (function(){
+      if(getUser()){ 
+        $('#login-screen').style.display='none'; 
+        $('#app').style.display='block';
+        updateProfile();
+      }
+    })();
+
+    $('#register-link').addEventListener('click', ()=>showToast('Registration coming soon!'));
+    $('#contact-link').addEventListener('click', ()=>showToast("Admin contact: hello@dsf.example"));
+    $('#forgot-link').addEventListener('click', (e)=>{e.preventDefault(); showToast('Password reset link sent (demo)');});
+
+    // =========================
+    // INITIAL DATA
+    // =========================
+    const DEFAULT_PRODUCTS = [
+      { id: "p1", name: "Chanel Coco Noir Perfume", price: 49.99, desc: "A modern amber fragrance with luminous notes.", category: "Beauty", img: "https://images.unsplash.com/photo-1585386959984-a4155224a1ad?auto=format&fit=crop&w=600&q=80", rating: "★ ★ ★ ★ ☆" },
+      { id: "p2", name: "Smart Watch", price: 59.99, desc: "Track fitness and stay connected anytime.", category: "Electronics", img: "https://static.vecteezy.com/system/resources/previews/036/782/085/original/ai-generated-innovative-smart-watch-mockup-for-tech-marketing-ai-generated-photo.jpg", rating: "★ ★ ★ ★ ☆" },
+      { id: "p3", name: "Blue star AC", price: 59.99, desc: "AC with 1 year warranty.", category: "Electronics", img: "https://up.yimg.com/ib/th/id/OIP.9QMpnA79_NmlLmeEKa94HAHaDE?pid=Api&rs=1&c=1&qlt=95&w=288&h=119", rating: "★ ★ ★ ★ ☆" },
+      { id: "p3", name: "Carbon fibre sunglasses", price: 59.99, desc: "LOOk stylis with these unbreakable glasses", category: "Accessories", img: "https://sp.yimg.com/ib/th?id=OPAC.f8J3nECBIC1bbQ474C474&o=5&pid=21.1&w=160&h=105", rating: "★ ★ ★ ★ ☆" },
+      { id: "p3", name: "ROBOT vaccum cleaner", price: 59.99, desc: "Best AI machine for householf usage with 4 years warranty.", category: "Electronics", img: "https://th.bing.com/th/id/R.9340a1f4865a92d8c520693f2a9b1ecd?rik=B8Rn2YPxq8MsJg&pid=ImgRaw&r=0", rating: "★ ★ ★ ★ ☆" },
+      { id: "p1", name: "Mars Foundation", price: 49.99, desc: "For all skin types.", category: "Beauty", img: "https://sp.yimg.com/ib/th/id/OIP.v0gCKCnXBWcTbMmx5hAE1wHaHa?pid=Api&w=148&h=148&c=7&dpr=2&rs=1", rating: "★ ★ ★ ★ ☆" },
+      { id: "p4", name: "Whirphool Washing machine", price: 198.97, desc: "Smart washing machine with 3 year earranty", category: "Electronics", img: "https://tse1.mm.bing.net/th/id/OIP.qX0qzLhUdE1yl1KxtCOG8wAAAA?rs=1&pid=ImgDetMain&o=7&rm=3", rating: "★ ★ ★ ★ ☆" },
+      { id: "p7", name: "Wonder chef AIR FRYER", price: 198.97, desc: "best electronic to cook food without oil with 15 months warranty", category: "Electronics", img: "https://up.yimg.com/ib/th/id/OIP.46vlhP8f6ZP0F7eXVUjpLQHaIq?pid=Api&rs=1&c=1&qlt=95&w=92&h=108", rating: "★ ★ ★ ★ ☆" },
+      { id: "p3", name: "DIOR Lipstick", price: 85.99, desc: "The couture shades, inspired by the iconic creations.", category: "Beauty", img: "https://sp.yimg.com/ib/th?id=OPAC.6lD%2bzxDewxAG2w474C474&o=5&pid=21.1&w=174&h=174", rating: "★ ★ ★ ★ ★" },
+      { id: "p9", name: "Leather Backpack", price: 79.99, desc: "Spacious and stylish with premium material.", category: "Accessories", img: "https://static.vecteezy.com/system/resources/previews/047/759/565/original/a-school-bag-mockup-isolated-on-a-transparent-background-free-png.png", rating: "★ ★ ★ ★ ★" },
+      { id: "p1", name: "PLum face serum", price: 21.99, desc: "Best for all skin types and brightens skin and reduces blemishes.", category: "Beauty", img: "https://up.yimg.com/ib/th/id/OIP.SjA94FJ_gCi_riGptGm9ygHaHa?pid=Api&rs=1&c=1&qlt=95&w=110&h=110", rating: "★ ★ ★ ★ ☆" },
+      { id: "p8", name: "Travel Luggage", price: 46.99, desc: "Spacious and made with premium quality.", category: "Accessories", img: "https://www.travelite.com/media/85/36/74/1691139857/koffergroesen.webp", rating: "★ ★ ★ ★ ★" },
+      { id: "p11", name: "Jeans for women", price: 16.99, desc: "Best fabric and comfortable", category: "Fashion", img: "https://sp.yimg.com/ib/th?id=OPAC.fwNWhy0V6WLnoA474C474&o=5&pid=21.1&w=174&h=174", rating: "★ ★ ★ ★ ★" },
+      { id: "p11", name: "Basic Tee", price: 16.99, desc: "Made with the best fabrics and feels comfortable.", category: "Fashion", img: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=600&q=80", rating: "★ ★ ★ ★ ★" },
+      { id: "p1", name: "PILGRIM Face serum", price: 21.99, desc: "Best for all skin types reduces blemishes.", category: "Beauty", img: "https://tse1.mm.bing.net/th/id/OIP.-lp68a7EkbmFRtUxtDdyIQHaHa?pid=Api&P=0&h=180", rating: "★ ★ ★ ★ ☆" },
+      { id: "p10", name: "Wooden Blocks", price: 24.99, desc: "Classic wooden toy blocks for toddlers.", category: "Kids", img: "https://sp.yimg.com/ib/th?id=OPAC.5a8Sm5weZBU%2bGA474C474&o=5&pid=21.1&w=160&h=105", rating: "★ ★ ★ ★ ☆" },
+      { id: "p13", name: "Rider Classic Car", price: 16.99, desc: " Battery Powered 6 V Ride-On Toy With Remote Control and Sound", category: "Kids", img: "https://i5.walmartimages.com/seo/Lil-Rider-Classic-Car-Coupe-Battery-Powered-6-V-Ride-On-Toy-With-Remote-Control-and-Sound_332f0bae-9b46-4f75-bb72-bd40a091fe5c_2.5ca0b5da6f5d0f806b68f18e683a8f70.jpeg?odnHeight=573&odnWidth=573&odnBg=FFFFFF", rating: "★ ★ ★ ★ ☆" },
+      { id: "p11", name: "Toy Truck", price: 16.99, desc: "Best Choice Products Kids 12V Ride On Truck, Battery Powered Toy Car w/Spring Suspension, Remote Control, 3 Speeds, LED Lights, Bluetooth - Black", category: "Kids", img: "https://m.media-amazon.com/images/I/91eBsYH9aGL.AC_SX679.jpg", rating: "★ ★ ★ ★ ☆" },
+      { id: "p12", name: "Toy cars", price: 16.99, desc: "Remote Car Toys for Kids 12V Rechargeable Children.", category: "Kids", img: "https://image.made-in-china.com/155f0j00RmbTnGYIJocf/11671518-Remote-Car-Toys-for-Kids-12V-Rechargeable-Children-Toys-Car-Kids-Toys.webp", rating: "★ ★ ★ ★ ☆" },
+      { id: "p1", name: "Cetaphil cleanser", price: 19.99, desc: "Best for all skin types and cleanses deeply.", category: "Beauty", img: "https://up.yimg.com/ib/th/id/OIP.rGr6gng1avgBIxg_h5LGxwHaHa?pid=Api&rs=1&c=1&qlt=95&w=121&h=121", rating: "★ ★ ★ ★ ☆" },
+      { id: "16", name: "Ceramic Vase", price: 34.99, desc: "Minimalist ceramic vase for home decor.", category: "Decor", img: "https://up.yimg.com/ib/th/id/OIP.oNOmrkiODnT-OgVpzYZ4EgHaHa?pid=Api&rs=1&c=1&qlt=95&w=121&h=121", rating: "★ ★ ★ ★ ★" },
+      { id: "p11", name: "Short kurthi fo women", price: 26.99, desc: "Cute and simple for women can wear without any comfort issues which is made of best fabric", category: "Fashion", img: "https://tse4.mm.bing.net/th/id/OIP.KjOCldhNIOCfJ2hovbMubAHaKs?pid=Api&P=0&h=180", rating: "★ ★ ★ ★ ★" },
+      { id: "p14", name: "Table top ornament antique", price: 34.99, desc: "Minimalist ceramic vase for home decor.", category: "Decor", img: "https://s.alicdn.com/@sc04/kf/H44ec34ff08ed4a3cb74c34c6b7221e89S.jpg_321x321.jpg", rating: "★ ★ ★ ★ ★" },
+      { id: "p15", name: "Gold Deer Crystal Ball Decoration Home Decor", price: 51.99, desc: "Home Decor Interior Modern Table Living Room Gold Deer Accessories.", category: "Decor", img: "https://s.alicdn.com/@sc04/kf/H6f51cf1952354190a4d692da282b7997b.jpg_321x321.jpg", rating: "★ ★ ★ ★ ★" },
+      { id: "p17", name: "Luxuru Decoratice Sculpture", price: 51.99, desc: "Home Decor Interior Modern Table Living Room Gold Deer Accessories.", category: "Decor", img: "https://s.alicdn.com/@sc04/kf/H4f704d74d13a4ec08fa378add23c07baX.jpg_321x321.jpg", rating: "★ ★ ★ ★ ★" },
+      { id: "p16", name: "Metal swan with LED lights", price: 51.99, desc: "Home Decor Interior Modern Table Living Room Gold Deer Accessories.", category: "Decor", img: "https://s.alicdn.com/@sc04/kf/A9a56716002604d7b9b8eced74940bbca4.jpg_321x321.jpg", rating: "★ ★ ★ ★ ★" },
+      { id: "p11", name: "Classic black shirt for men", price: 26.99, desc: "Made of cotton for men which looks simple and classy", category: "Fashion", img: "https://sp.yimg.com/ib/th?id=OPAC.0VnEd70fRNpRgg474C474&o=5&pid=21.1&w=174&h=174", rating: "★ ★ ★ ★ ★" },
+     
+
+    ];
+
+    // =========================
+    // PRODUCT STATE
+    // =========================
+    const container = $('#product-container');
+    let allProducts = [];
+    let launchedProducts = [];
+
+    function renderProducts(productsToRender) {
+      container.innerHTML = '';
+      if (productsToRender.length === 0) {
+        container.innerHTML = <p style='color:var(--muted);grid-column:1/-1;text-align:center;'>No products found.</p>;
+        return;
+      }
+      const currentWishlist = JSON.parse(localStorage.getItem('dsf_wishlist')) || [];
+      
+      productsToRender.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.dataset.category = product.category;
+        card.dataset.title = product.name;
+        card.dataset.id = product.id;
+        card.dataset.img = product.img;
+        card.dataset.price = product.price;
+        card.dataset.desc = product.desc;
+        card.dataset.rating = product.rating;
+        const isLiked = currentWishlist.includes(product.id);
+
+        card.innerHTML = `
+          <button class="wishlist-toggle-btn ${isLiked ? 'liked' : ''}" aria-label="Add to wishlist" data-id="${product.id}">
+            <svg width="20" height="20" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+          </button>
+          <img src="${product.img}" alt="${product.name}">
+          <div class="product-body">
+            <h2>${product.name}</h2>
+            <div class="rating" aria-label="Rating: ${product.rating}">${product.rating}</div>
+            <p class="price">$${Number(product.price).toFixed(2)}</p>
+            <p class="desc">${product.desc}</p>
+            <div class="actions-row">
+              <button class="buy-btn">Add to Cart</button>
+              <button class="quick-view">Quick View</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function initializeProducts() {
+      launchedProducts = JSON.parse(localStorage.getItem('dsf_launched_products')) || [];
+      allProducts = [...launchedProducts, ...DEFAULT_PRODUCTS];
+      renderProducts(allProducts);
+    }
+
+    // =========================
+    // CART STATE
+    // =========================
+    const cartCount = $('#cart-count');
+    const cartModal = $('#cart-modal');
+    const cartItemsContainer = $('#cart-items-container');
+    const cartEmptyMsg = $('#cart-empty-msg');
+    const cartTotalEl = $('#cart-total');
+    let cart = []; 
+
+    function saveCart() { localStorage.setItem('dsf_cart', JSON.stringify(cart)); }
+
+    function updateCartDisplay() {
+      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      cartCount.textContent = totalItems;
+      cartCount.style.display = totalItems > 0 ? 'block' : 'none';
+
+      if (totalItems === 0) {
+        cartItemsContainer.innerHTML = ''; 
+        cartItemsContainer.appendChild(cartEmptyMsg); 
+        cartTotalEl.style.display = 'none';
+        $('#checkout-btn').style.display = 'none';
+      } else {
+        cartItemsContainer.innerHTML = ''; 
+        let total = 0;
+        cart.forEach(item => {
+          const itemEl = document.createElement('div');
+          itemEl.className = 'cart-item';
+          itemEl.innerHTML = `
+            <img src="${item.img}" alt="${item.name}">
+            <div class="cart-item-info">
+              <h4>${item.name}</h4>
+              <p>$${Number(item.price).toFixed(2)}</p>
+            </div>
+            <div class="cart-item-actions">
+              <button class="cart-qty-change" data-id="${item.id}" data-change="-1" aria-label="Decrease quantity">－</button>
+              <span>${item.quantity}</span>
+              <button class="cart-qty-change" data-id="${item.id}" data-change="1" aria-label="Increase quantity">＋</button>
+              <button class="remove-from-cart" data-id="${item.id}" aria-label="Remove item">Remove</button>
+            </div>
+          `;
+          cartItemsContainer.appendChild(itemEl);
+          total += item.price * item.quantity;
+        });
+        cartTotalEl.textContent = Total: $${total.toFixed(2)};
+        cartTotalEl.style.display = 'block';
+        $('#checkout-btn').style.display = 'block';
+      }
+    }
+
+    function addToCart(productId) {
+      const productToAdd = allProducts.find(p => p.id === productId);
+      if (!productToAdd) return;
+      const existingItem = cart.find(item => item.id === productId);
+      if (existingItem) {
+        existingItem.quantity++;
+      } else {
+        cart.push({ id: productToAdd.id, name: productToAdd.name, price: productToAdd.price, img: productToAdd.img, quantity: 1 });
+      }
+      showToast(${productToAdd.name} added to cart);
+      saveCart();
+      updateCartDisplay();
+    }
+    
+    function updateCartItem(productId, change) {
+      const itemIndex = cart.findIndex(item => item.id === productId);
+      if (itemIndex === -1) return;
+      const changeNum = Number(change);
+      
+      if (changeNum === 0) { 
+        cart.splice(itemIndex, 1);
+        showToast('Item removed from cart');
+      } else {
+        cart[itemIndex].quantity += changeNum;
+        if (cart[itemIndex].quantity <= 0) {
+          cart.splice(itemIndex, 1); 
+          showToast('Item removed from cart');
+        }
+      }
+      saveCart();
+      updateCartDisplay();
+    }
+
+    function initializeCart() {
+      const savedCart = localStorage.getItem('dsf_cart');
+      if (savedCart) { cart = JSON.parse(savedCart); }
+      updateCartDisplay(); 
+    }
+    
+    // =========================
+    // WISHLIST STATE
+    // =========================
+    const wishlistCount = $('#wishlist-count');
+    const wishlistModal = $('#wishlist-modal');
+    const wishlistItemsContainer = $('#wishlist-items-container');
+    const wishlistEmptyMsg = $('#wishlist-empty-msg');
+    let wishlist = [];
+
+    function saveWishlist() { localStorage.setItem('dsf_wishlist', JSON.stringify(wishlist)); }
+    
+    function updateWishlistDisplay() {
+      wishlistCount.textContent = wishlist.length;
+      wishlistCount.style.display = wishlist.length > 0 ? 'block' : 'none';
+      
+      if (wishlist.length === 0) {
+        wishlistItemsContainer.innerHTML = '';
+        wishlistItemsContainer.appendChild(wishlistEmptyMsg);
+      } else {
+        wishlistItemsContainer.innerHTML = '';
+        wishlist.forEach(productId => {
+          const item = allProducts.find(p => p.id === productId);
+          if (!item) return;
+          
+          const itemEl = document.createElement('div');
+          itemEl.className = 'wishlist-item';
+          itemEl.innerHTML = `
+            <img src="${item.img}" alt="${item.name}">
+            <div class="wishlist-item-info">
+              <h4>${item.name}</h4>
+              <p>$${Number(item.price).toFixed(2)}</p>
+            </div>
+            <button class="remove-from-wishlist" data-id="${item.id}">Remove</button>
+          `;
+          wishlistItemsContainer.appendChild(itemEl);
+        });
+      }
+    }
+    
+    function toggleWishlist(productId, btnElement) {
+      const itemIndex = wishlist.indexOf(productId);
+      
+      if (itemIndex > -1) {
+        wishlist.splice(itemIndex, 1);
+        if(btnElement) btnElement.classList.remove('liked');
+        showToast('Removed from wishlist');
+      } else {
+        wishlist.push(productId);
+        if(btnElement) btnElement.classList.add('liked');
+        showToast('Added to wishlist');
+      }
+      saveWishlist();
+      updateWishlistDisplay();
+      if (!btnElement) {
+        const cardBtn = $(.wishlist-toggle-btn[data-id="${productId}"]);
+        if(cardBtn) cardBtn.classList.remove('liked');
+      }
+    }
+    
+    function initializeWishlist() {
+      const savedWishlist = localStorage.getItem('dsf_wishlist');
+      if (savedWishlist) { wishlist = JSON.parse(savedWishlist); }
+      updateWishlistDisplay();
+    }
+
+    // =========================
+    // EVENT LISTENERS
+    // =========================
+    container.addEventListener('click', (e)=>{
+      const card = e.target.closest('.product-card');
+      if(!card) return;
+      const productId = card.dataset.id;
+      
+      if(e.target.closest('.wishlist-toggle-btn')){
+        e.preventDefault(); 
+        const btn = e.target.closest('.wishlist-toggle-btn');
+        toggleWishlist(productId, btn);
+        return;
+      }
+      if(e.target.matches('.buy-btn')){
+        addToCart(productId);
+      }
+      if(e.target.matches('.quick-view')){
+        openQuickView(card);
+      }
+    });
+
+    const qvModal = $('#quick-modal');
+    const qvAddBtn = $('#qv-add');
+    function openQuickView(card){
+      $('#qv-img').src = card.dataset.img;
+      $('#qv-img').alt = card.dataset.title;
+      $('#qv-name').textContent = card.dataset.title;
+      $('#qv-rating').innerHTML = card.dataset.rating;
+      $('#qv-price').textContent = $${Number(card.dataset.price).toFixed(2)};
+      $('#qv-desc').textContent = card.dataset.desc;
+      qvAddBtn.dataset.id = card.dataset.id;
+      qvModal.classList.add('active');
+    }
+    qvAddBtn.addEventListener('click', (e) => {
+      const productId = e.target.dataset.id;
+      if (productId) {
+        addToCart(productId);
+        qvModal.classList.remove('active');
+      }
+    });
+    qvModal.addEventListener('click', (e)=>{
+      if(e.target.matches('[data-close]') || e.target === qvModal){ qvModal.classList.remove('active'); }
+    });
+
+    const catStrip = $('#category-strip');
+    const breadcrumbCurrent = $('#bc-current');
+    catStrip.addEventListener('click', (e)=>{
+      const btn = e.target.closest('.category-btn');
+      if(!btn) return;
+      $$('.category-btn', catStrip).forEach(b=>b.dataset.active="false");
+      btn.dataset.active = "true";
+      
+      const category = btn.dataset.category;
+      breadcrumbCurrent.textContent = btn.textContent;
+      
+      let productsToRender;
+      if (category === 'All') {
+        productsToRender = allProducts;
+      } else if (category === 'latest') {
+        productsToRender = launchedProducts;
+      } else {
+        productsToRender = allProducts.filter(p => p.category.toLowerCase() === category.toLowerCase());
+      }
+      renderProducts(productsToRender);
+    });
+    $('#bc-home').addEventListener('click', () => {
+      $('.category-btn[data-category="All"]').click();
+    });
+    $('#bc-products').addEventListener('click', () => {
+      $('.category-btn[data-category="All"]').click();
+    });
+
+    $('#search-input').addEventListener('input', (e)=>{
+      const q = e.target.value.toLowerCase().trim();
+      const filteredProducts = allProducts.filter(p => p.name.toLowerCase().includes(q));
+      renderProducts(filteredProducts);
+      $$('.category-btn', catStrip).forEach(b=>b.dataset.active="false");
+      $('.category-btn[data-category="All"]').dataset.active="true";
+      breadcrumbCurrent.textContent = "Search Results";
+    });
+
+    const launchModal = $('#launch-modal');
+    $('#launch-btn').addEventListener('click', ()=> launchModal.classList.add('active'));
+    launchModal.addEventListener('click', (e)=>{
+      if(e.target.matches('[data-close]') || e.target === launchModal) launchModal.classList.remove('active');
+    });
+
+    $('#launch-form').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const newProduct = {
+        id: 'p' + Date.now(),
+        name: $('#pname').value.trim(),
+        price: Number($('#pprice').value.trim()),
+        desc: $('#pdesc').value.trim(),
+        category: $('#pcategory').value.trim(),
+        img: $('#pimage').value.trim(),
+        rating: $('#prating').value.trim() || '★ ★ ★ ★ ☆'
+      };
+      if(!newProduct.name || !newProduct.price || !newProduct.desc || !newProduct.category || !newProduct.img){ 
+        showToast('Please fill all fields'); return; 
+      }
+      
+      launchedProducts.unshift(newProduct);
+      localStorage.setItem('dsf_launched_products', JSON.stringify(launchedProducts));
+      allProducts = [...launchedProducts, ...DEFAULT_PRODUCTS];
+      
+      launchModal.classList.remove('active');
+      e.target.reset();
+      showToast('Product launched!');
+      
+      $('#latest-arrivals-btn').click();
+    });
+    
+    $('#cart-btn').addEventListener('click', () => cartModal.classList.add('active'));
+    cartModal.addEventListener('click', (e)=>{
+      if(e.target.matches('[data-close]') || e.target === cartModal){ cartModal.classList.remove('active'); }
+    });
+    cartItemsContainer.addEventListener('click', (e) => {
+      const btn = e.target;
+      const id = btn.dataset.id;
+      if (!id) return;
+      if (btn.matches('.cart-qty-change')) { updateCartItem(id, btn.dataset.change); }
+      if (btn.matches('.remove-from-cart')) { updateCartItem(id, 0); }
+    });
+    $('#checkout-btn').addEventListener('click', ()=>{
+      alert("Checkout is demo only, no payment processed.");
+      cartModal.classList.remove('active');
+    });
+    
+    $('#wishlist-btn').addEventListener('click', () => wishlistModal.classList.add('active'));
+    wishlistModal.addEventListener('click', (e) => {
+      if(e.target.matches('[data-close]') || e.target === wishlistModal) {
+        wishlistModal.classList.remove('active');
+      }
+      if(e.target.matches('.remove-from-wishlist')) {
+        const id = e.target.dataset.id;
+        toggleWishlist(id, null);
+      }
+    });
+
+    const profileModal = $('#profile-modal');
+    function updateProfile() {
+      let user = getUser() || "Guest";
+      let email = user === "Guest" ? "guest@mail.com" : ${user.toLowerCase().replace(/\s+/g,'')}@mail.com;
+      $('#profile-details').innerHTML = `
+        <div><strong>Name:</strong> ${user}</div>
+        <div><strong>Email:</strong> ${email}</div>
+      `;
+      $('#profile-btn').textContent = user.charAt(0).toUpperCase();
+    }
+    $('#profile-btn').addEventListener('click', ()=> profileModal.classList.add('active'));
+    profileModal.addEventListener('click', (e)=>{
+      if(e.target.matches('[data-close]') || e.target === profileModal) profileModal.classList.remove('active');
+    });
+    $('#settings-btn').addEventListener('click', () => showToast('Settings page coming soon!'));
+    $('#customer-service-btn').addEventListener('click', () => showToast('Contact support at support@dsf.example'));
+    
+    $('#logout-btn').addEventListener('click', ()=>{
+      sessionStorage.removeItem('dsf_user'); 
+      localStorage.removeItem('dsf_cart');
+      localStorage.removeItem('dsf_wishlist');
+      cart = [];
+      wishlist = [];
+      updateCartDisplay();
+      updateWishlistDisplay();
+      
+      profileModal.classList.remove('active');
+      $('#app').style.display='none';
+      $('#login-screen').style.display='grid';
+      loginID.value = '';
+      loginPass.value = '';
+      $('#profile-btn').textContent = '';
+    });
+
+    window.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape'){
+        qvModal.classList.remove('active');
+        launchModal.classList.remove('active');
+        cartModal.classList.remove('active');
+        profileModal.classList.remove('active');
+        wishlistModal.classList.remove('active');
+      }
+    });
+
+    // =========================
+    // INITIALIZE APP
+    // =========================
+    initializeProducts(); 
+    initializeCart();
+    initializeWishlist();
+
+  </script>
+</body>
+</html>
